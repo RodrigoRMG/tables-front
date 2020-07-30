@@ -21,6 +21,10 @@ const actions = (resource?: string) => {
     destroy: function(id:number) {
       return Client.destroy(resource, id);
     },
+
+    request: function(path:any, data:any = {}) {
+      return Client.request(path, data);
+    }
   };
 };
 
@@ -29,7 +33,9 @@ const underscore = (str:any) =>
 
 export default new Proxy({}, {
   get: function(_, prop) {
-    if (prop !== "request") {
+    if (prop === "request") {
+      return actions().request;
+    } else {
       const resource = prop;
       return actions(underscore(resource));
     }

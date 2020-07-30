@@ -1,5 +1,4 @@
 import Http from "./Http";
-
 const Client = {
   all: async (resource:any, params:any) => {
     const path = `/${resource}`;
@@ -37,6 +36,11 @@ const Client = {
 
     return whenOk(response, () => null);
   },
+  request: async (path: string, data?: any) => {
+    const response = await Http.post(apiURL(path), data || {}, options());
+
+    return whenOk(response, (response:any) => response);
+  }
 };
 
 const options = (): { headers: any, params?: any, } => {

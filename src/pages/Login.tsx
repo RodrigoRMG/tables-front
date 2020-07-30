@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -12,6 +12,8 @@ import { LockOutlined } from '@material-ui/icons';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import { withAuthHelpers } from '../utils/withAuth';
+import { useAuthContext } from '../context/AuthContext';
 
 function Copyright() {
   return (
@@ -48,6 +50,29 @@ const useStyles = makeStyles((theme) => ({
 
 export function Login() {
   const classes = useStyles();
+  const auth = useAuthContext();
+  const authenticateWith = withAuthHelpers();
+  const login = async () => await authenticateWith.signIn({ email: email, password: password });
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [remember, setRemember] = useState(false);
+
+  const authenticate = async () => {
+    const handler = await login();
+    return handler;
+  };
+
+  const handleSubmit = async (event:any) => {
+    event.preventDefault();
+    const authentication = await authenticate() as any;
+    if (authentication.success) {
+      auth.setUserAuthenticated(authentication.user, remember);
+    } else {
+      setError('Email o password incorrectos, inténtelo de nuevo.');
+    }
+  };
 
   return (
     <Container component="main" maxWidth="xs">
@@ -59,7 +84,10 @@ export function Login() {
         <Typography component="h1" variant="h5">
           Iniciar sesión
         </Typography>
-        <form className={classes.form} noValidate>
+        <Typography style={{color:"red"}}>
+          {error}
+        </Typography>
+        <form className={classes.form} noValidate onSubmit={handleSubmit}>
           <TextField
             variant="outlined"
             margin="normal"
@@ -70,6 +98,8 @@ export function Login() {
             name="email"
             autoComplete="email"
             autoFocus
+            value={email}
+            onChange={(event)=>setEmail(event.target.value)}
           />
           <TextField
             variant="outlined"
@@ -81,10 +111,13 @@ export function Login() {
             type="password"
             id="password"
             autoComplete="current-password"
+            value={password}
+            onChange={(event)=>setPassword(event.target.value)}
           />
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
             label="Recordarme"
+            onChange={(event:any)=>setRemember(event.target.checked)}
           />
           <Button
             type="submit"
