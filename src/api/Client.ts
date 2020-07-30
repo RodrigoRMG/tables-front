@@ -1,4 +1,5 @@
 import Http from "./Http";
+import variables from '../utils/variables';
 const Client = {
   all: async (resource:any, params:any) => {
     const path = `/${resource}`;
@@ -69,7 +70,7 @@ async function whenOk(response:any, handle:any) {
   }
 }
 
-const apiURL = (path:string) => '/api' + path;
+const apiURL = (path:string) => variables.baseUrl+'/api' + path;
 
 export { Client, apiURL };
 export default Client;

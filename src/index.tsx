@@ -6,7 +6,7 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
-  <BrowserRouter basename={process.env.NODE_ENV === 'development' ? '' : '/app'}>
+  <BrowserRouter basename="/">
     <App />
   </BrowserRouter>, document.getElementById('root')
 );
